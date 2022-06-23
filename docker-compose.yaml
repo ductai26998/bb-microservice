@@ -1,0 +1,86 @@
+version: '2'
+
+services:
+  # account
+  bb_account:
+    build: ./bb_account
+    command: bash -c "python3 ./bb_account/manage.py runserver 0.0.0.0:8001"
+    # command: bash -c "python3 ./bb_account/manage.py makemigrations && python3 ./bb_account/manage.py migrate && python3 ./bb_account/manage.py runserver 0.0.0.0:8001"
+    volumes:
+      - ./bb_account:/code/bb_account
+    ports:
+      - 8001:8001
+    restart: always
+    depends_on:
+      - db_account
+    links:
+      - db_account
+  
+  db_account:
+    image: mysql:5.5
+    container_name: db_account
+    ports:
+      - "3311:3311"
+    volumes:
+      - .:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 123qwe!@#
+      MYSQL_DATABASE: bb_1
+      MYSQL_USER: root
+      MYSQL_PASSWORD:
+
+  # service
+  bb_service:
+    build: ./bb_service
+    command: bash -c "python3 ./bb_service/manage.py runserver 0.0.0.0:8002"
+    # command: bash -c "python3 ./bb_service/manage.py makemigrations && python3 ./bb_service/manage.py migrate && python3 ./bb_service/manage.py runserver 0.0.0.0:8002"
+    volumes:
+      - ./bb_service:/code/bb_service
+    ports:
+      - 8002:8002
+    restart: always
+    depends_on:
+      - db_service
+    links:
+      - db_service
+  
+  db_service:
+    image: mysql:5.5
+    container_name: db_service
+    ports:
+      - "3312:3312"
+    volumes:
+      - .:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 123qwe!@#
+      MYSQL_DATABASE: db_service
+      MYSQL_USER: root
+      MYSQL_PASSWORD:
+
+  # booking
+  bb_booking:
+    build: ./bb_booking
+    command: bash -c "python3 ./bb_booking/manage.py runserver 0.0.0.0:8003"
+    # command: bash -c "python3 ./bb_booking/manage.py makemigrations && python3 ./bb_booking/manage.py migrate && python3 ./bb_booking/manage.py runserver 0.0.0.0:8003"
+    volumes:
+      - ./bb_booking:/code/bb_booking
+    ports:
+      - 8003:8003
+    restart: always
+    depends_on:
+      - db_booking
+    links:
+      - db_booking
+  
+  db_booking:
+    image: mysql:5.5
+    container_name: db_booking
+    ports:
+      - "3313:3313"
+    volumes:
+      - .:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 123qwe!@#
+      MYSQL_DATABASE: db_booking
+      MYSQL_USER: root
+      MYSQL_PASSWORD:
